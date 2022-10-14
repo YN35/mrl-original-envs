@@ -1,4 +1,4 @@
-# オリジナルのMineRLの環境たち
+# オリジナルのMineRLの環境
 
 ## How to use
 

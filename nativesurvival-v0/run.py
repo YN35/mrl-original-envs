@@ -2,12 +2,19 @@ from minerl.env.malmo import InstanceManager
 from env import NativeSurvivalv0
 import gym
 import minerl  # noqa
+import argparse
 import time
+import os
 
 
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--single', action="store_true", help='use the single agent default xml')
+    parser.add_argument('--port', type=int, default=None, help='the port of existing client or None to launch')
+    parser.add_argument('--episodes', type=int, default=2, help='the number of resets to perform - default is 1')
+    args = parser.parse_args()
 
     # logs
     import coloredlogs
@@ -20,20 +27,32 @@ if __name__ == '__main__':
 
     logging.debug("Deleting previous java log files...")
     subprocess.check_call("rm -rf logs/*", shell=True)
+    
+    agent_num = 4
 
-    # make env
-    env_spec = NativeSurvivalv0(agent_count=2)
+    env_spec = NativeSurvivalv0(agent_count=agent_num)
+        
+    #make instance
+    insta = []
+    # ports = []
+    # for i in range(agent_num):
+    #     inst, port = InstanceManager.get_instance(os.getpid(), instance_id=i)
+    #     inst.create_multiagent_instance_socket(socktime=60.0 * 4)
+    #     insta.append(inst)
+    #     ports.append(port)
 
     # IF you want to use existing instances use this!
     # instances = [
-    #     InstanceManager.add_existing_instance(9001),
-    #     InstanceManager.add_existing_instance(9002)]
-    instances = []
+    #     InstanceManager.add_existing_instance(ports[0]),
+    #     InstanceManager.add_existing_instance(ports[1]),
+    #     InstanceManager.add_existing_instance(ports[2]),
+    #     InstanceManager.add_existing_instance(ports[3])]
+    # instances = list(range(4))
 
-    env = env_spec.make(instances=instances)
+    env = env_spec.make(instances=insta)
 
     # iterate desired episodes
-    for r in range(2):
+    for r in range(args.episodes):
         logging.debug(f"Reset for episode {r + 1}")
         env.reset()
         
@@ -57,7 +76,7 @@ if __name__ == '__main__':
                 # if agent == 0:
                 #     actions[agent]["chat"] = "/summon creeper"
             
-            env.set_next_chat_message("/tp @a 100 200 100")
+            # env.set_next_chat_message("/tp @a 100 200 100")
             # print(str(steps) + " actions: " + str(actions))
 
             obs, reward, done, info = env.step(actions)
