@@ -34,8 +34,21 @@ if __name__ == '__main__':
         
     #make instance
     insta = []
+    # ports = []
+    # for i in range(agent_num):
+    #     inst, port = InstanceManager.get_instance(os.getpid(), instance_id=i)
+    #     inst.create_multiagent_instance_socket(socktime=60.0 * 4)
+    #     insta.append(inst)
+    #     ports.append(port)
 
-    env = env_spec.make(instances=insta)
+    # IF you want to use existing instances use this!
+    instances = [
+        InstanceManager.add_existing_instance(10000),
+        InstanceManager.add_existing_instance(10001),
+        InstanceManager.add_existing_instance(10002)]
+    # instances = list(range(4))
+
+    env = env_spec.make(instances=instances)
 
     # iterate desired episodes
     for r in range(args.episodes):
